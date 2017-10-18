@@ -1,0 +1,12 @@
+# Blender MTL File: 'kicker.blend'
+# Material Count: 1
+
+newmtl kicker
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.062550 0.106295 0.289045
+Ks 0.178706 0.248322 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
