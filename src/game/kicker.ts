@@ -5,7 +5,7 @@ import * as BABYLON from 'babylonjs';
 export class Kicker extends Obstacle {
 
     init(): void {
-        BABYLON.SceneLoader.ImportMesh(null, "./assets/", "kicker.obj", this._game.scene,
+        BABYLON.SceneLoader.ImportMesh(null, "./assets/", "kicker.obj", Game.instance.scene,
             (meshes: BABYLON.AbstractMesh[],
                 particleSystems: BABYLON.ParticleSystem[],
                 skeletons: BABYLON.Skeleton[]) => {
@@ -30,7 +30,7 @@ export class Kicker extends Obstacle {
                     friction: 1,
                     restitution: 0
                 },
-                this._game.scene);
+                Game.instance.scene);
     }
 
     dispose(): void {

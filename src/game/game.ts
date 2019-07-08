@@ -1,23 +1,24 @@
 import { StartMenu } from "./start-menu";
 import { Level } from "./level";
 import * as BABYLON from 'babylonjs';
-
-export enum GameState {
-    LOGIN,
-    MENU,
-    START
-}
+import { GameState, GameModel } from './game-model';
 
 export const DESIGN_WIDTH: number = 1920;
-export const DESIGN_HEIGHT: number = 960;
+export const DESIGN_HEIGHT: number = 1080;
 
 export class Game {
+
+    private static _instance: Game;
+
+    public static get instance(): Game {
+        return Game._instance;
+    }
 
     private _canvas: HTMLCanvasElement;
     private _guiRoot: HTMLDivElement;
 
     private _engine: BABYLON.Engine;
-    private _gameState: GameState;
+    private _gameModel: GameModel;
     private _scene: BABYLON.Scene;
 
     private clickListener: any;
@@ -31,14 +32,20 @@ export class Game {
 
 
     constructor(canvas: HTMLCanvasElement, guiRoot: HTMLDivElement) {
+        if(Game.instance != null) {
+            console.error("Game can only exist once");
+            return;
+        }
+        Game._instance = this;
         this._canvas = canvas;
         this._guiRoot = guiRoot;
         this._engine = new BABYLON.Engine(this.canvas, true);
+        this._gameModel = new GameModel();
     }
 
     public init(): void {
-        // Gamestate auf Startmenu
-        this._gameState = GameState.MENU;
+        // Gamestate auf INIT
+        this._gameModel.init();
         // Scene
         this._scene = this.createScene(this.engine);
         //Level
@@ -50,8 +57,8 @@ export class Game {
     }
 
     public reset(): void {
-        if (this._gameState === GameState.START) {
-            this._gameState = GameState.MENU;
+        if (this._gameModel.gameState === GameState.START) {
+            this._gameModel.menu();
             this.level.reset();
             this.cancelPointerLock();
             this.startMenu = this.createStartMenu();
@@ -89,6 +96,7 @@ export class Game {
                 (event) => {
                     switch (event.sourceEvent.key) {
                         case "Escape":
+                        case "m":
                             this.reset();
                             break;
                     }
@@ -106,27 +114,21 @@ export class Game {
         return scene;
     }
 
-    // private createLogin(): Login {
-    //   let login = new Login(this);
-    //   login.init();
-    //   return login;
-    // }
-
     private createStartMenu(): StartMenu {
-        let startMenu = new StartMenu(this);
+        let startMenu = new StartMenu();
         startMenu.init();
         return startMenu;
     }
 
     private createLevel(scene: BABYLON.Scene): Level {
-        let level = new Level(this);
+        let level = new Level();
         level.init();
         return level;
     }
 
-    public startGame(): void {
+    public startGame(userName: string): void {
         console.log("Start Game!");
-        this._gameState = GameState.START;
+        this.gameModel.start(userName);
         this.startMenu.dispose();
         this.startMenu = null;
         this.level.start();
@@ -163,8 +165,7 @@ export class Game {
         this.scene.registerBeforeRender(() => {
             let now: number = new Date().getTime() * 0.001;
             let deltaTime: number = (1 / this.engine.getFps());
-            //Game.engine.getDeltaTime() * 0.001;
-
+            
             this.level.update(deltaTime);
             if (this.startMenu)
                 this.startMenu.update(deltaTime);
@@ -179,7 +180,6 @@ export class Game {
         // the canvas/window resize event handler
         window.addEventListener('resize', () => {
             this.engine.resize();
-            // this._guiManager.resize();
         });
     }
 
@@ -199,9 +199,9 @@ export class Game {
         return this._guiRoot;
     }
 
-    public get gameState(): GameState {
-        return this._gameState;
-    }
+    public get gameModel(): GameModel {
+        return this._gameModel;
+    }   
 
     public get contentScaleFactor(): number {
         return this._contentScaleFactor;

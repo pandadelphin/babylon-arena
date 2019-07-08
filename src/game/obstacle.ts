@@ -1,4 +1,3 @@
-import { Game, GameState } from "./game";
 import * as BABYLON from 'babylonjs';
 
 
@@ -9,11 +8,8 @@ export class Obstacle {
     protected _rotation: BABYLON.Vector3;
     protected _scaling: BABYLON.Vector3;
     protected _orientation: BABYLON.Matrix;
-    protected _game: Game;
 
-    constructor(game: Game, position?: BABYLON.Vector3, rotation?: BABYLON.Vector3, scaling?: BABYLON.Vector3) {
-        this._game = game;
-
+    constructor(position?: BABYLON.Vector3, rotation?: BABYLON.Vector3, scaling?: BABYLON.Vector3) {
         if (!position) {
             this._position = BABYLON.Vector3.Zero();
         }

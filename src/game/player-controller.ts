@@ -1,29 +1,26 @@
 import { Player } from "./player";
-import { Game, GameState } from "./game";
+import { Game } from "./game";
 import * as BABYLON from 'babylonjs';
+import { GameState } from "./game-model";
 
 export class PlayerController {
 
     private _player: Player;
-
-    private _movement: BABYLON.Vector3;
     private _movementSpeed: number;
     private _strafeDir: number;
     private _movementDir: number;
-    private _game: Game;
     private _gravity: BABYLON.Vector3;
 
-    constructor(game: Game, player: Player, gravity: BABYLON.Vector3) {
+    constructor(player: Player, gravity: BABYLON.Vector3) {
         this._player = player;
         this._movementSpeed = 1;
         this._strafeDir = 0;
         this._movementDir = 0;
-        this._game = game;
         this._gravity = gravity;
     }
 
     update(deltaTime: number) {
-        if (this._game.gameState == GameState.START) {
+        if (Game.instance.gameModel.gameState == GameState.START) {
 
             if (this._movementDir == 1) {
                 let forwards = new BABYLON.Vector3(

@@ -9,11 +9,9 @@ export class LevelMap {
     private _ground: BABYLON.Mesh;
     private _playerSpawnPoint: BABYLON.Vector3;
     private _obstacles: Array<Obstacle>;
-    private _game: Game;
 
-    constructor(game: Game) {
+    constructor() {
         this._obstacles = new Array<Obstacle>();
-        this._game = game;
     }
 
     init(): void {
@@ -24,7 +22,6 @@ export class LevelMap {
 
     initObstacles(): void {
         let obstacle = new Kicker(
-            this._game,
             new BABYLON.Vector3(100, 0, 0),
             new BABYLON.Vector3(0, 0, 0),
             new BABYLON.Vector3(10, 10, 10)
@@ -33,7 +30,6 @@ export class LevelMap {
         this._obstacles.push(obstacle);
 
         obstacle = new Kicker(
-            this._game,
             new BABYLON.Vector3(100, 0, -100),
             new BABYLON.Vector3(0, Math.PI / 4, 0),
             new BABYLON.Vector3(50, 50, 50)
@@ -44,9 +40,9 @@ export class LevelMap {
 
     initPlaneGround(): void {
         this._ground = BABYLON.Mesh.CreatePlane(
-            "ground", 1000.0, this._game.scene);
+            "ground", 1000.0, Game.instance.scene);
         let groundMaterial: BABYLON.StandardMaterial =
-            new BABYLON.StandardMaterial("groundMat", this._game.scene);
+            new BABYLON.StandardMaterial("groundMat", Game.instance.scene);
         groundMaterial.diffuseColor = new BABYLON.Color3(0.25, 0.45, 0.66);
         groundMaterial.backFaceCulling = false;
         this._ground.material = groundMaterial;
@@ -61,16 +57,16 @@ export class LevelMap {
             new BABYLON.PhysicsImpostor(this._ground,
                 BABYLON.PhysicsImpostor.BoxImpostor,
                 { mass: 0, restitution: 0, friction: 0 },
-                this._game.scene);
+                Game.instance.scene);
     }
 
     initHeightMapGround(): void {
         BABYLON.Mesh.CreateGroundFromHeightMap(
             "ground", "assets/park.png", 200, 200, 250, 0, 10,
-            this._game.scene, false, (mesh: BABYLON.Mesh) => {
+            Game.instance.scene, false, (mesh: BABYLON.Mesh) => {
                 this._ground = mesh;
                 let groundMaterial: BABYLON.StandardMaterial =
-                    new BABYLON.StandardMaterial("groundMat", this._game.scene);
+                    new BABYLON.StandardMaterial("groundMat", Game.instance.scene);
                 groundMaterial.diffuseColor = new BABYLON.Color3(0, 0, 1);
                 groundMaterial.backFaceCulling = false;
                 this._ground.material = groundMaterial;
@@ -82,7 +78,7 @@ export class LevelMap {
             new BABYLON.PhysicsImpostor(this._ground,
                 BABYLON.PhysicsImpostor.HeightmapImpostor,
                 { mass: 0, restitution: 0, friction: 0 },
-                this._game.scene);
+                Game.instance.scene);
     }
 
     start(): void {

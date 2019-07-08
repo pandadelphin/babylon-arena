@@ -1,19 +1,9 @@
-import { DESIGN_WIDTH, DESIGN_HEIGHT, Game, GameState } from "./game";
-import * as BABYLON from 'babylonjs';
+import { DESIGN_WIDTH, DESIGN_HEIGHT, Game } from "./game";
 import * as GUI from "babylonjs-gui";
 
-let btnStartGameText = "Click to Start!";
-
 export class StartMenu {
-    private _game: Game;
-
-    private _designWidth = 1000;
-    private _designHeight = 600;
 
     private _contentScaleFactor: number;
-
-    private _width: number;
-    private _height: number;
 
     private _btnWidth: number;
     private _btnHeight: number;
@@ -26,15 +16,12 @@ export class StartMenu {
     private _btnStartGame: GUI.Button;
     private _txtUsername: GUI.InputText;
 
-    constructor(game: Game) {
-        this._game = game;
+    constructor() {
 
-        this._contentScaleFactor = this._game.contentScaleFactor;
-        this._width = this._designWidth * this._contentScaleFactor;
-        this._height = this._designHeight * this._contentScaleFactor;
+        this._contentScaleFactor = Game.instance.contentScaleFactor;
         this._marginTop = 300 * this._contentScaleFactor;
         this._distance = 50 * this._contentScaleFactor;
-        this._btnWidth = 800 * this._contentScaleFactor;
+        this._btnWidth = 600 * this._contentScaleFactor;
         this._btnHeight = 100 * this._contentScaleFactor;
         this._fontSize = 40 * this._contentScaleFactor;
     }
@@ -53,6 +40,11 @@ export class StartMenu {
         this._txtUsername.autoStretchWidth = false;
         this._txtUsername.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
         this._txtUsername.fontSize = this._fontSize;
+        if(Game.instance.gameModel.user.userName) {
+            this._txtUsername.text = Game.instance.gameModel.user.userName;
+        } else {
+            this._txtUsername.text = "";
+        }
         this._guiTexture.addControl(this._txtUsername);
 
 
@@ -65,7 +57,10 @@ export class StartMenu {
         this._btnStartGame.fontSize = this._fontSize;
         this._btnStartGame.onPointerUpObservable.add(() => {
             console.log("onClick");
-            this._game.startGame();
+            if(!this._txtUsername.text) {
+                return;
+            }
+            Game.instance.startGame(this._txtUsername.text);
         });
         this._btnStartGame.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
         this._guiTexture.addControl(this._btnStartGame);

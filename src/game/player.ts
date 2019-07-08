@@ -1,4 +1,4 @@
-import { Game, GameState } from "./game";
+import { Game } from "./game";
 import * as BABYLON from 'babylonjs';
 
 export class Player {
@@ -7,18 +7,16 @@ export class Player {
     private _followCamera: BABYLON.FollowCamera;
     private _playerCamera: BABYLON.TargetCamera;
     private _mesh: BABYLON.Mesh;
-    private _game: Game;
     private _spawnPoint: BABYLON.Vector3;
 
 
-    constructor(game: Game) {
-        this._game = game;
+    constructor() {
     }
 
     init(spawnPoint: BABYLON.Vector3): void {
         this._spawnPoint = spawnPoint;
-        this._mesh = BABYLON.Mesh.CreateSphere("box", 15, 2, this._game.scene);
-        let material = new BABYLON.StandardMaterial("Mat", this._game.scene);
+        this._mesh = BABYLON.Mesh.CreateSphere("box", 15, 2, Game.instance.scene);
+        let material = new BABYLON.StandardMaterial("Mat", Game.instance.scene);
         material.diffuseColor = new BABYLON.Color3(0, 0, 0);
         this._mesh.material = material;
         this._mesh.position.copyFrom(this._spawnPoint);
@@ -34,11 +32,11 @@ export class Player {
     initFPSCamera(): void {
         if (!this._fpsCamera) {
             this._fpsCamera = new BABYLON.FreeCamera(
-                "FPSCamera", new BABYLON.Vector3(0, 10, 0), this._game.scene);
+                "FPSCamera", new BABYLON.Vector3(0, 10, 0), Game.instance.scene);
             this._fpsCamera.parent = this._mesh;
         }
-        this._fpsCamera.attachControl(this._game.canvas, true);
-        this._game.setActiveCamera(this._fpsCamera);
+        this._fpsCamera.attachControl(Game.instance.canvas, true);
+        Game.instance.setActiveCamera(this._fpsCamera);
         this._playerCamera = this._fpsCamera;
     }
 
@@ -46,17 +44,19 @@ export class Player {
         console.log("initFollowCamera()");
         if (!this._followCamera) {
             let camera: BABYLON.FollowCamera = new BABYLON.FollowCamera(
-                "FollowCam", new BABYLON.Vector3(0, 15, -45), this._game.scene);
+                "FollowCam", new BABYLON.Vector3(0, 15, -45), Game.instance.scene);
             camera.lockedTarget = this._mesh;
             camera.radius = 30; // how far from the object to follow
             camera.heightOffset = 8; // how high above the object to place the camera
             camera.rotationOffset = 270; // the viewing angle
             camera.cameraAcceleration = 0.1; // how fast to move
             camera.maxCameraSpeed = 20; // speed limit
+            camera.lowerHeightOffsetLimit = 0;
+            camera.upperHeightOffsetLimit = 20  ;
             this._followCamera = camera;
         }
-        this._followCamera.attachControl(this._game.canvas, true);
-        this._game.setActiveCamera(this._followCamera);
+        this._followCamera.attachControl(Game.instance.canvas, true);
+        Game.instance.setActiveCamera(this._followCamera);
         this._playerCamera = this._followCamera;
     }
 

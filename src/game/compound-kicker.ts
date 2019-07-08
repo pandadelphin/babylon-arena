@@ -1,21 +1,19 @@
-
 import { Obstacle } from "./obstacle";
 import { Game } from "./game";
 import * as BABYLON from 'babylonjs';
 
 export class CompoundKicker extends Obstacle {
 
-
     init(): void {
-        this._mesh = BABYLON.Mesh.CreateBox("box", 2, this._game.scene, true);
+        this._mesh = BABYLON.Mesh.CreateBox("box", 2, Game.instance.scene, true);
         let material: BABYLON.StandardMaterial =
-            new BABYLON.StandardMaterial("boxMat", this._game.scene);
+            new BABYLON.StandardMaterial("boxMat", Game.instance.scene);
         this._mesh.material = material;
         this._mesh.visibility = 0.01;
         this._mesh.showBoundingBox = true;
 
         let planeTop: BABYLON.Mesh = BABYLON.MeshBuilder.CreatePlane("kickerTop",
-            { width: 2, height: 2.36 }, this._game.scene);
+            { width: 2, height: 2.36 }, Game.instance.scene);
     }
 
     start(): void {
@@ -28,7 +26,7 @@ export class CompoundKicker extends Obstacle {
                     friction: 1,
                     restitution: 0
                 },
-                this._game.scene);
+                Game.instance.scene);
     }
 
     dispose(): void {
